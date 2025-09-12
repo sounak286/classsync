@@ -1,0 +1,1038 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Classly — Smart Attendance & Learning Hub</title>
+
+  <!-- Fonts: Playfair Display (Classly title), Poppins (professional), Baloo 2 (cute headings/buttons) -->
+<link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;600&family=Baloo+2:wght@400;600&display=swap" rel="stylesheet">
+
+
+
+
+
+  <style>
+    :root{
+      --bg-top: #eef7ff;
+      --bg-mid: #e6f3ff;
+      --bg-bottom: #dbeafe;
+      --blue-900: #0b2545;
+      --blue-800: #123a6e;
+      --accent: #2563eb;
+      --accent-2: #60a5fa;
+      --muted: #55657a;
+      --glass: rgba(255,255,255,0.82);
+      --card: #ffffff;
+      --radius-lg: 16px;
+      --radius-md: 12px;
+      --maxw: 1200px;
+      --shadow-lg: 0 18px 60px rgba(11,37,69,0.08);
+      --shadow-md: 0 8px 30px rgba(11,37,69,0.06);
+      --interactive: cubic-bezier(.2,.9,.2,1);
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg-top),var(--bg-bottom));font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto; color:var(--blue-900); -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;}
+    a{color:inherit}
+    .container{max-width:var(--maxw);margin:0 auto;padding:0 20px}
+
+    /* NAV */
+    nav.topbar{
+      position:sticky; top:14px; z-index:120; margin:14px auto;
+      background:var(--glass); backdrop-filter: blur(10px);
+      border-radius:22px; padding:12px 18px; display:flex; align-items:center; justify-content:space-between;
+      box-shadow:var(--shadow-md);
+      transition:transform .25s var(--interactive), box-shadow .25s var(--interactive);
+    }
+    .brand{display:flex; gap:12px; align-items:center}
+    .brand .dot{
+      width:42px; height:42px; border-radius:12px; display:inline-grid; place-items:center;
+      background: radial-gradient(circle at 30% 30%, #fff8d6 0%, #cfeeff 30%, #a7dbff 60%);
+      box-shadow: 0 8px 30px rgba(11,37,69,0.08);
+      transition:transform .25s var(--interactive);
+    }
+.brand h1 {
+  font-family: 'Marcellus', serif;
+  font-size: 2rem;
+  margin: 0;
+  color: var(--blue-800);
+  letter-spacing: 1px;
+}
+
+
+
+    .nav-actions{display:flex; gap:10px; align-items:center}
+    .nav-actions button { background:transparent; border:none; padding:8px 12px; border-radius:10px; cursor:pointer; font-weight:600; color:var(--blue-900); transition:all .22s var(--interactive) }
+    .nav-actions button:hover{ background:var(--accent-2); color:white; transform:translateY(-3px); box-shadow:0 10px 26px rgba(37,99,235,0.12) }
+    .nav-actions .cta { background:linear-gradient(90deg,var(--accent),var(--accent-2)); color:white; padding:10px 14px; border-radius:12px; box-shadow:0 10px 28px rgba(37,99,235,0.14) }
+
+    /* LAYOUT: hero */
+    header.hero{padding:48px 0 28px}
+    .hero-grid{display:grid; grid-template-columns:1fr 460px; gap:34px; align-items:center;}
+    .hero-title{font-family:'Baloo 2',cursive; font-size:2.6rem; line-height:1.02; margin:0 0 12px; color:var(--blue-900)}
+    .hero-sub{color:var(--muted); margin:0 0 18px; font-size:1.05rem}
+    .hero-ctas{display:flex; gap:12px; align-items:center}
+    .btn{cursor:pointer; border:none; border-radius:14px; padding:12px 16px; font-weight:700; font-family:'Baloo 2',cursive; transition:transform .22s var(--interactive), box-shadow .22s var(--interactive)}
+    .btn-primary{background:linear-gradient(90deg,var(--accent),var(--accent-2)); color:white; box-shadow:0 12px 34px rgba(37,99,235,0.14)}
+    .btn-ghost{background:transparent; border:1px solid rgba(17,24,39,0.06); color:var(--blue-900)}
+
+    /* hero visual */
+    .visual-plate{position:relative; width:100%; display:flex; align-items:center; justify-content:center; padding:8px}
+    .visual-card{width:420px; border-radius:20px; background:linear-gradient(180deg,#fff,#f7fbff); padding:14px; box-shadow:var(--shadow-lg); transform-origin:center; transition:transform .35s var(--interactive)}
+    .visual-card img{width:100%; display:block; border-radius:14px}
+    .floating-badge{position:absolute; right:16px; bottom:-10px; background:linear-gradient(90deg,#fff,#e8f7ff); border-radius:14px; padding:10px 12px; box-shadow:var(--shadow-md); transform:translateY(8px); opacity:0; transition:all .6s var(--interactive)}
+    .floating-badge.show{transform:translateY(0); opacity:1}
+
+    /* SECTIONS */
+    section{padding:56px 0}
+    .section-head{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:18px}
+    .section-title{font-family:'Baloo 2',cursive; font-size:1.6rem; color:var(--blue-800); margin:0}
+    .muted{color:var(--muted); font-size:0.95rem}
+
+    .card {background:var(--card); padding:18px; border-radius:16px; box-shadow:var(--shadow-md)}
+    .two-col{display:grid; grid-template-columns:1fr 360px; gap:18px; align-items:start}
+
+    /* attendance visuals */
+    .attendance-visual{display:flex; gap:14px; align-items:flex-start}
+    .qr-canvas{width:170px; height:170px; border-radius:10px; background:linear-gradient(180deg,#fff,#f7fbff); display:grid; place-items:center; box-shadow:0 8px 24px rgba(11,37,69,0.06)}
+    .attendance-controls{display:flex; gap:10px; flex-wrap:wrap}
+
+    /* calendar */
+    .week-grid{display:grid; grid-template-columns:repeat(7,1fr); gap:10px}
+    .day{background:linear-gradient(180deg,#fff,#f6fbff); border-radius:12px; padding:10px; min-height:82px; box-shadow:0 8px 20px rgba(11,37,69,0.04); position:relative}
+    .event-pill{background:linear-gradient(90deg,var(--accent-2),var(--accent)); color:white; padding:6px 8px; border-radius:10px; font-size:0.85rem; display:inline-block; margin-top:8px}
+
+    /* productivity */
+    .pom-wrap{display:flex; gap:12px; align-items:center}
+    .timer-circle{width:140px; height:140px; border-radius:50%; display:grid; place-items:center; font-weight:700; font-size:1.1rem; background:linear-gradient(180deg,#fff,#eef8ff); box-shadow:0 10px 30px rgba(11,37,69,0.06)}
+    .controls-row{display:flex; gap:8px; margin-top:10px}
+
+    /* chat */
+    .chat-wrap{display:flex; gap:12px}
+    .chatbox{flex:1; min-height:220px; border-radius:12px; padding:12px; background:linear-gradient(180deg,#fff,#f9fdff); box-shadow:0 10px 26px rgba(11,37,69,0.04); overflow:auto}
+    .msg{padding:8px 10px; border-radius:12px; margin:8px 0; display:inline-block; max-width:78%}
+    .msg.user{background:#e6f0ff; align-self:flex-end}
+    .msg.bot{background:#fff}
+
+    /* heatmap */
+    .heatmap{display:flex; gap:6px; align-items:center}
+    .heat-cell{width:18px; height:18px; border-radius:4px; background:#f1f5f9; transition:transform .18s ease}
+
+    /* forums */
+    .forum-input{display:flex; gap:8px; margin-top:10px}
+    .post{background:linear-gradient(180deg,#fff,#f7fbff); border-radius:12px; padding:12px; box-shadow:0 8px 24px rgba(11,37,69,0.04); margin-top:10px}
+
+    /* badges / stats */
+    .kpis{display:flex; gap:12px; align-items:center; flex-wrap:wrap}
+    .kpi{background:linear-gradient(180deg,#fff,#f6fbff); padding:12px; border-radius:12px; box-shadow:0 8px 20px rgba(11,37,69,0.04)}
+
+    /* reveal animation class */
+    .reveal{opacity:0; transform:translateY(24px); transition:all .7s var(--interactive); will-change:transform,opacity}
+    .reveal.visible{opacity:1; transform:none}
+
+    /* small screens */
+    @media (max-width:1000px){
+      .hero-grid{grid-template-columns:1fr; gap:24px}
+      .two-col{grid-template-columns:1fr}
+      .visual-card{width:88%}
+      .week-grid{grid-template-columns:repeat(4,1fr)}
+    }
+    @media (max-width:560px){
+      .week-grid{grid-template-columns:repeat(2,1fr)}
+      nav.topbar{padding:10px}
+      .brand h1{font-size:1.25rem}
+      .visual-card{width:92%}
+    }
+
+    /* subtle interactive focus style */
+    .focusable:focus{outline:3px solid rgba(37,99,235,0.12); outline-offset:4px; border-radius:10px}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <nav class="topbar" id="topbar">
+      <div class="brand" aria-hidden="false">
+        <div class="dot" id="navDot" title="Classly logo">
+          <!-- small cute book icon (SVG inline) -->
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M3 5.5C3 4.119 4.119 3 5.5 3h11C18.881 3 20 4.119 20 5.5V19c0 .828-.672 1.5-1.5 1.5H5.5C4.672 20.5 4 19.828 4 19V5.5z" fill="#fff"/>
+            <path d="M6 6h10v3H6z" fill="#60a5fa"/>
+            <path d="M6 11h10v8H6z" fill="#cfeeff"/>
+          </svg>
+        </div>
+        <h1>Classly</h1>
+      </div>
+
+      <div class="nav-actions" role="navigation" aria-label="Main">
+        <button data-scroll="#attendance" class="focusable">Attendance</button>
+        <button data-scroll="#calendar" class="focusable">Calendar</button>
+        <button data-scroll="#productivity" class="focusable">Productivity</button>
+        <button data-scroll="#chat" class="focusable">Chatbot</button>
+        <button id="openAuth" class="cta focusable">Sign In</button>
+      </div>
+    </nav>
+  </div>
+
+  <!-- HERO -->
+  <header class="container hero" id="hero">
+    <div class="hero-grid reveal">
+      <div>
+        <h2 class="hero-title">Classly — smart attendance, kinder learning</h2>
+        <p class="hero-sub">A beautifully animated, interactive platform that helps teachers and students manage attendance, schedules, productivity and communication.</p>
+
+        <div class="hero-ctas" role="toolbar" aria-label="Primary actions">
+          <button class="btn btn-primary" id="demoStart">Explore Demo</button>
+          <button class="btn btn-ghost" id="tourBtn">Guided Tour</button>
+        </div>
+
+        <div style="height:14px"></div>
+        <div class="card" style="display:flex;gap:12px;align-items:center;margin-top:8px">
+          <div style="flex:1">
+            <div class="muted">Next live class</div>
+            <div style="font-weight:700">Physics — 09:00 AM</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
+            <div class="muted">Attendance accuracy</div>
+            <div style="font-weight:700;color:var(--accent)">94%</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="visual-plate">
+        <div class="visual-card" id="visualCard">
+          <!-- Cute SVG illustration representing learning (external but reliable) -->
+          <img id="heroIllustration" src="cute-education_illustration.png" alt="students illustration" />
+        </div>
+        <div class="floating-badge" id="floatingBadge">
+          <div style="display:flex;gap:8px;align-items:center">
+            <div style="width:44px;height:44px;border-radius:10px;background:linear-gradient(90deg,#fff,#f1fbff);display:grid;place-items:center">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2l3 5h-6l3-5z" fill="#60a5fa"/><path d="M5 9h14v9a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V9z" fill="#cfeeff"/></svg>
+            </div>
+            <div>
+              <div style="font-weight:700">Start session</div>
+              <div class="muted" style="font-size:0.85rem">Generate secure QR & enroll</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ATTENDANCE SECTION -->
+  <section id="attendance" class="reveal">
+    <div class="container">
+      <div class="section-head">
+        <h3 class="section-title">Attendance System</h3>
+        <div class="muted">QR-based secure sessions • face enrollment • device binding</div>
+      </div>
+
+      <div class="card two-col">
+        <div>
+          <div style="display:flex;gap:12px;align-items:center;margin-bottom:10px">
+            <button class="btn btn-primary" id="genQRBtn">Generate Secure QR</button>
+            <button class="btn btn-ghost" id="enrollFaceBtn">Enroll Face</button>
+            <button class="btn btn-ghost" id="bindDeviceBtn">Bind Device</button>
+            <button class="btn btn-ghost" id="simulateScanBtn">Simulate Scan</button>
+          </div>
+
+          <div style="display:flex;gap:14px;margin-top:12px;align-items:flex-start">
+            <div class="qr-canvas card" style="display:flex;align-items:center;justify-content:center;flex-direction:column">
+              <canvas id="qrCanvas" width="160" height="160" aria-hidden="true"></canvas>
+              <div style="height:8px"></div>
+              <div class="muted small">QR lifespan: <span id="qrTimer" style="font-weight:700">—</span></div>
+            </div>
+
+            <div style="flex:1">
+              <div class="card" style="margin-bottom:10px">
+                <div style="display:flex;justify-content:space-between;align-items:center">
+                  <strong>Session Info</strong>
+                  <div class="muted">Active students: <strong id="liveCount">0</strong></div>
+                </div>
+                <div style="height:8px"></div>
+                <div class="muted small" id="sessionMeta">No active session</div>
+                <div style="height:8px"></div>
+                <div class="attendance-controls">
+                  <label class="muted small">Expiry (s)</label>
+                  <input id="qrExpiry" type="number" min="15" max="120" value="45" style="width:80px;padding:6px;border-radius:8px;border:1px solid rgba(11,37,69,0.06)" />
+                </div>
+              </div>
+
+              <div class="card">
+                <strong>Enrollment</strong>
+                <div style="height:8px"></div>
+                <div id="enrollStatus" class="muted">No face enrolled • No device bound</div>
+                <div style="height:10px"></div>
+                <div class="muted small">Face enrollment in this UI is a mock — it will store a demo snapshot and show status.</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="height:12px"></div>
+          <div class="card">
+            <strong>Export</strong>
+            <div style="height:8px"></div>
+            <div class="muted small">Export attendance data (CSV)</div>
+            <div style="height:8px"></div>
+            <div style="display:flex;gap:8px">
+              <button class="btn btn-primary" id="exportCsvBtn">Export CSV</button>
+              <button class="btn btn-ghost" id="downloadReportBtn">Download Report</button>
+            </div>
+          </div>
+        </div>
+
+        <aside>
+          <div class="card">
+            <strong>Teacher Dashboard</strong>
+            <div style="height:8px"></div>
+            <div class="muted small">Class: Physics • Students: 48</div>
+            <div style="height:8px"></div>
+            <div class="kpis" style="margin-top:6px">
+              <div class="kpi"><div style="font-weight:700">94%</div><div class="muted small">Accuracy</div></div>
+              <div class="kpi"><div style="font-weight:700"><span id="streakCount">7</span></div><div class="muted small">Streak</div></div>
+            </div>
+            <div style="height:12px"></div>
+            <button class="btn btn-ghost" id="manualOverride">Manual Override</button>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- CALENDAR -->
+  <section id="calendar" class="reveal">
+    <div class="container">
+      <div class="section-head">
+        <h3 class="section-title">Smart Calendar</h3>
+        <div class="muted">Week view • Create events • Reminders</div>
+      </div>
+
+      <div class="card">
+        <div style="display:flex;gap:18px;flex-wrap:wrap">
+          <div style="flex:1; min-width:260px">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <strong>Week View</strong>
+              <div class="muted small">Mon — Sun</div>
+            </div>
+            <div style="height:10px"></div>
+            <div class="week-grid" id="weekGrid" aria-live="polite"></div>
+          </div>
+
+          <div style="width:320px">
+            <div>
+              <strong>Create Event</strong>
+              <div style="height:8px"></div>
+              <input id="evName" placeholder="Event name" style="width:100%;padding:10px;border-radius:10px;border:1px solid rgba(11,37,69,0.06)" />
+              <div style="height:8px"></div>
+              <input id="evDate" type="date" style="width:100%;padding:10px;border-radius:10px;border:1px solid rgba(11,37,69,0.06)" />
+              <div style="height:8px"></div>
+              <input id="evTime" type="time" style="width:100%;padding:10px;border-radius:10px;border:1px solid rgba(11,37,69,0.06)" />
+              <div style="height:10px"></div>
+              <div style="display:flex;gap:8px">
+                <button class="btn btn-primary" id="addEventBtn">Add</button>
+                <button class="btn btn-ghost" id="clearEvents">Clear</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRODUCTIVITY -->
+  <section id="productivity" class="reveal">
+    <div class="container">
+      <div class="section-head">
+        <h3 class="section-title">Productivity Suite</h3>
+        <div class="muted">Pomodoro • Eisenhower matrix • White noise</div>
+      </div>
+
+      <div class="card" style="display:grid;grid-template-columns:320px 1fr;gap:18px">
+        <div>
+          <div style="background:linear-gradient(180deg,#fff,#f7fbff); padding:14px; border-radius:12px; box-shadow:var(--shadow-md)">
+            <div style="display:flex;align-items:center;gap:12px">
+              <div class="timer-circle" id="pomTimer">25:00</div>
+              <div style="flex:1">
+                <div style="font-weight:700">Pomodoro</div>
+                <div class="muted small">Work 25 / Break 5 (customizable)</div>
+                <div class="controls-row" style="margin-top:10px">
+                  <button class="btn btn-primary" id="startPom">Start</button>
+                  <button class="btn btn-ghost" id="pausePom">Pause</button>
+                  <button class="btn btn-ghost" id="resetPom">Reset</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style="height:12px"></div>
+          <div class="card">
+            <strong>Eisenhower Matrix</strong>
+            <div style="height:8px"></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+              <div class="card" style="min-height:110px" id="urgentImp">Urgent + Important</div>
+              <div class="card" style="min-height:110px" id="notUrgImp">Not Urgent + Important</div>
+              <div class="card" style="min-height:110px" id="urgNotImp">Urgent + Not Important</div>
+              <div class="card" style="min-height:110px" id="notUrgNotImp">Not Urgent + Not Important</div>
+            </div>
+            <div style="height:8px"></div>
+            <input id="taskText" placeholder="Add task to matrix (pref: urgent+important)" style="width:100%;padding:10px;border-radius:8px;border:1px solid rgba(11,37,69,0.06)" />
+            <div style="height:8px"></div>
+            <div style="display:flex;gap:8px">
+              <button class="btn btn-primary" id="addTaskBtn">Add Task</button>
+              <button class="btn btn-ghost" id="suggestPriorities">AI Suggest</button>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="card" style="margin-bottom:12px">
+            <strong>White Noise</strong>
+            <div style="height:8px"></div>
+            <div style="display:flex;gap:8px;align-items:center">
+              <select id="noiseSelect" style="padding:8px;border-radius:8px;border:1px solid rgba(11,37,69,0.06)">
+                <option value="none">Off</option>
+                <option value="rain">Rain</option>
+                <option value="library">Library</option>
+                <option value="coffee">Coffee shop</option>
+              </select>
+              <button class="btn btn-primary" id="toggleNoise">Play</button>
+            </div>
+            <div class="muted small" style="margin-top:8px">Audio is front-end only and plays ambient loops.</div>
+          </div>
+
+          <div class="card">
+            <strong>Study Analytics</strong>
+            <div style="height:8px"></div>
+            <div class="muted small">Your weekly focus time</div>
+            <div style="height:10px"></div>
+            <div style="display:flex;gap:8px;align-items:center">
+              <div style="width:100%;height:8px;background:#eef6ff;border-radius:10px;overflow:hidden">
+                <div id="focusBar" style="width:62%;height:100%;background:linear-gradient(90deg,var(--accent-2),var(--accent));"></div>
+              </div>
+              <div style="font-weight:700">62%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CHATBOT -->
+  <section id="chat" class="reveal">
+    <div class="container">
+      <div class="section-head">
+        <h3 class="section-title">Intelligent Chatbot</h3>
+        <div class="muted">Switch persona: Student / Teacher</div>
+      </div>
+
+      <div class="card">
+        <div style="display:flex;gap:12px;align-items:center;margin-bottom:8px">
+          <button class="btn btn-ghost" id="personaStudent">Student</button>
+          <button class="btn btn-ghost" id="personaTeacher">Teacher</button>
+          <div style="flex:1"></div>
+          <div class="muted small">Persona: <strong id="personaLabel">Student</strong></div>
+        </div>
+
+        <div class="chat-wrap">
+          <div style="width:300px">
+            <div class="card" style="padding:10px">
+              <strong>Quick prompts</strong>
+              <div style="height:8px"></div>
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <button class="btn btn-ghost" data-prompt="How should I plan my study today?">Study plan</button>
+                <button class="btn btn-ghost" data-prompt="Generate a summary for yesterday's physics lecture.">Lecture summary</button>
+                <button class="btn btn-ghost" data-prompt="How many students are at risk?" id="quickRisk">Risk check</button>
+              </div>
+            </div>
+          </div>
+
+          <div style="flex:1; display:flex; flex-direction:column;">
+            <div class="chatbox" id="chatBox" role="log" aria-live="polite">
+              <div class="msg bot"><strong>Bot:</strong> Hi! I can help with planning, attendance insights, and study tips. Try typing below.</div>
+            </div>
+
+            <div style="display:flex;gap:8px;margin-top:8px">
+              <input id="chatInput" placeholder="Ask the assistant..." style="flex:1;padding:10px;border-radius:10px;border:1px solid rgba(11,37,69,0.06)" />
+              <button class="btn btn-primary" id="sendChat">Send</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FORUMS & NOTICES -->
+  <section id="social" class="reveal">
+    <div class="container">
+      <div class="section-head">
+        <h3 class="section-title">Forums & Notices</h3>
+        <div class="muted">Discussions, anonymous posting, and announcements</div>
+      </div>
+
+      <div class="card">
+        <div style="display:grid;grid-template-columns:1fr 320px;gap:12px">
+          <div>
+            <div style="display:flex;gap:8px;align-items:center">
+              <input id="postText" placeholder="Share something with your class..." style="flex:1;padding:10px;border-radius:10px;border:1px solid rgba(11,37,69,0.06)" />
+              <button class="btn btn-primary" id="postBtn">Post</button>
+            </div>
+
+            <div id="posts" style="margin-top:12px"></div>
+          </div>
+
+          <aside>
+            <div class="card">
+              <strong>Notices</strong>
+              <div style="height:8px"></div>
+              <div class="post"><strong>Exam schedule</strong><div class="muted small">Finals start next week — check calendar</div></div>
+              <div class="post"><strong>Holiday</strong><div class="muted small">Institution closed on Friday</div></div>
+            </div>
+
+            <div style="height:12px"></div>
+            <div class="card">
+              <strong>Top contributors</strong>
+              <div style="height:8px"></div>
+              <div class="muted small">Earn badges for participation</div>
+              <div style="height:8px"></div>
+              <div style="display:flex;gap:8px">
+                <div class="kpi"><div style="font-weight:700">12</div><div class="muted small">Posts</div></div>
+                <div class="kpi"><div style="font-weight:700">8</div><div class="muted small">Helpful</div></div>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ANALYTICS -->
+  <section id="analytics" class="reveal">
+    <div class="container">
+      <div class="section-head">
+        <h3 class="section-title">Analytics & Predictions</h3>
+        <div class="muted">Heatmaps, dropout risk, streaks & exports</div>
+      </div>
+
+      <div class="card" style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start">
+        <div style="width:420px">
+          <div class="card">
+            <strong>Attendance Heatmap (14 days)</strong>
+            <div style="height:10px"></div>
+            <div class="heatmap" id="heatmap"></div>
+          </div>
+        </div>
+
+        <div style="flex:1">
+          <div class="card">
+            <strong>Dropout Risk</strong>
+            <div style="height:8px"></div>
+            <div style="display:flex;align-items:center;gap:12px">
+              <div style="font-size:1.4rem;font-weight:800;color:#b45309" id="riskBadge">Low (12%)</div>
+              <div class="muted small">Factors: attendance, engagement, assignments</div>
+            </div>
+            <div style="height:10px"></div>
+            <div style="display:flex;gap:8px">
+              <button class="btn btn-primary" id="runModelBtn">Run prediction</button>
+              <button class="btn btn-ghost" id="exportAnalytics">Export</button>
+            </div>
+          </div>
+
+          <div style="height:12px"></div>
+
+          <div class="card">
+            <strong>Achievements</strong>
+            <div style="height:8px"></div>
+            <div style="display:flex;gap:8px;align-items:center">
+              <div class="kpi"><div style="font-weight:800">🏅</div><div class="muted small">Streaks</div></div>
+              <div class="kpi"><div style="font-weight:800">✨</div><div class="muted small">Badges</div></div>
+              <div class="kpi"><div style="font-weight:800">📈</div><div class="muted small">Growth</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer style="padding:36px 0">
+    <div class="container" style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+      <div class="muted">© 2025 Classly — Smart Attendance & Learning Hub</div>
+      <div style="display:flex;gap:10px;align-items:center">
+        <div class="muted small">Made with care</div>
+        <button class="btn btn-ghost" id="feedbackBtn">Send feedback</button>
+      </div>
+    </div>
+  </footer>
+
+  <!-- AUTH MODAL -->
+  <div id="authOverlay" style="position:fixed;inset:0;display:none;place-items:center;background:linear-gradient(180deg,rgba(6,11,27,0.28),rgba(6,11,27,0.18));z-index:200">
+    <div style="width:520px;max-width:94%;border-radius:16px;background:var(--card);padding:18px;box-shadow:var(--shadow-lg)">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div style="font-family:'Baloo 2',cursive;font-size:1.3rem">Welcome to Classly</div>
+          <div class="muted small">Sign in or create an account</div>
+        </div>
+        <button id="closeAuth" style="background:transparent;border:none;font-weight:700;cursor:pointer">✕</button>
+      </div>
+      <div style="height:12px"></div>
+
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <button id="showLogin" class="btn btn-primary" style="flex:1">Sign In</button>
+        <button id="showSignup" class="btn btn-ghost" style="flex:1">Create Account</button>
+      </div>
+
+      <div id="authForms" style="margin-top:12px"></div>
+    </div>
+  </div>
+
+  <!-- TOASTS -->
+  <div id="toastRoot" style="position:fixed;right:18px;top:18px;display:flex;flex-direction:column;gap:10px;z-index:300"></div>
+
+  <!-- SCRIPTS -->
+  <script>
+    // Utilities
+    const el = (s, r=document) => r.querySelector(s);
+    const els = (s, r=document) => Array.from(r.querySelectorAll(s));
+    function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+    function toast(msg, opts={time:2200}) {
+      const root = el('#toastRoot');
+      const t = document.createElement('div');
+      t.className = 'card';
+      t.style.padding = '10px 12px';
+      t.style.borderRadius = '10px';
+      t.style.minWidth = '180px';
+      t.style.boxShadow = '0 12px 30px rgba(11,37,69,0.12)';
+      t.innerHTML = msg;
+      root.appendChild(t);
+      requestAnimationFrame(()=> t.style.transform = 'translateY(-6px)');
+      setTimeout(()=> { t.style.opacity = '0'; t.style.transform = 'translateY(-20px)'; }, opts.time);
+      setTimeout(()=> root.removeChild(t), opts.time + 400);
+    }
+
+    // Reveal on scroll
+    (function(){
+      const io = new IntersectionObserver((entries)=>{
+        entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+      }, {threshold:0.14});
+      els('.reveal').forEach(n => io.observe(n));
+      // show floating badge after load
+      setTimeout(()=> el('#floatingBadge').classList.add('show'), 600);
+    })();
+
+    // Smooth nav scroll
+    els('[data-scroll]').forEach(btn=>{
+      btn.addEventListener('click', ()=> {
+        const sel = btn.getAttribute('data-scroll');
+        const targ = document.querySelector(sel);
+        if(targ) targ.scrollIntoView({behavior:'smooth', block:'start'});
+      });
+    });
+
+    // Hero interaction: visual card tilt on mouse move
+    (function(){
+      const card = el('#visualCard');
+      if(!card) return;
+      card.addEventListener('mousemove', (e)=>{
+        const r = card.getBoundingClientRect();
+        const cx = r.left + r.width/2;
+        const cy = r.top + r.height/2;
+        const dx = (e.clientX - cx) / (r.width/2);
+        const dy = (e.clientY - cy) / (r.height/2);
+        card.style.transform = `rotateX(${clamp(-dy*6, -10, 10)}deg) rotateY(${clamp(dx*6, -10, 10)}deg) scale(1.02)`;
+      });
+      card.addEventListener('mouseleave', ()=> card.style.transform = 'none');
+    })();
+
+    /* =========================
+       AUTH (UI only, role pick)
+       ========================= */
+    (function(){
+      const overlay = el('#authOverlay'), forms = el('#authForms');
+      const open = el('#openAuth'), close = el('#closeAuth'), showLogin = el('#showLogin'), showSignup = el('#showSignup');
+
+      function showLoginForm(){
+        forms.innerHTML = `
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div><input id="loginEmail" placeholder="Email" style="width:100%;padding:10px;border-radius:8px;border:1px solid rgba(11,37,69,0.06)"></div>
+            <div><input id="loginPass" type="password" placeholder="Password" style="width:100%;padding:10px;border-radius:8px;border:1px solid rgba(11,37,69,0.06)"></div>
+            <div style="display:flex;gap:8px">
+              <select id="loginRole" style="padding:8px;border-radius:8px;border:1px solid rgba(11,37,69,0.06);flex:1">
+                <option>Student</option><option>Teacher</option><option>Principal</option><option>Administrator</option>
+              </select>
+              <button id="loginBtn" class="btn btn-primary">Sign In</button>
+            </div>
+          </div>`;
+        el('#loginBtn').addEventListener('click', ()=>{
+          overlay.style.display='none';
+          toast('Signed in as ' + el('#loginRole').value);
+        });
+      }
+
+      function showSignupForm(){
+        forms.innerHTML = `
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <input id="suName" placeholder="Full name" style="width:100%;padding:10px;border-radius:8px;border:1px solid rgba(11,37,69,0.06)">
+            <input id="suEmail" placeholder="Email" style="width:100%;padding:10px;border-radius:8px;border:1px solid rgba(11,37,69,0.06)">
+            <input id="suPass" type="password" placeholder="Password" style="width:100%;padding:10px;border-radius:8px;border:1px solid rgba(11,37,69,0.06)">
+            <div style="display:flex;gap:8px">
+              <select id="suRole" style="padding:8px;border-radius:8px;border:1px solid rgba(11,37,69,0.06);flex:1">
+                <option>Student</option><option>Teacher</option><option>Principal</option><option>Administrator</option>
+              </select>
+              <button id="signupBtn" class="btn btn-primary">Create</button>
+            </div>
+          </div>`;
+        el('#signupBtn').addEventListener('click', ()=>{
+          overlay.style.display='none';
+          toast('Account created • ' + el('#suRole').value);
+        });
+      }
+
+      open.addEventListener('click', ()=> { overlay.style.display='grid'; showLoginForm(); });
+      close.addEventListener('click', ()=> overlay.style.display='none');
+      showLogin.addEventListener('click', showLoginForm);
+      showSignup.addEventListener('click', showSignupForm);
+    })();
+
+    /* =========================
+       ATTENDANCE (QR canvas mock + session)
+       ========================= */
+    (function(){
+      const canvas = el('#qrCanvas'), ctx = canvas.getContext('2d');
+      const genBtn = el('#genQRBtn'), qrTimerEl = el('#qrTimer'), simulateBtn = el('#simulateScanBtn');
+      const enrollBtn = el('#enrollFaceBtn'), bindBtn = el('#bindDeviceBtn');
+      const sessionMeta = el('#sessionMeta'), liveCountEl = el('#liveCount'), enrollStatusEl = el('#enrollStatus');
+      let expiry = parseInt(el('#qrExpiry').value,10)||45;
+      let life = 0, tickInterval=null, liveCount=0;
+      let enrolled=false, bound=false;
+
+      function drawStylizedQR(seed=Date.now()){
+        // draw simple pattern (not real QR) to look legit
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        ctx.fillStyle = '#f8fbff';
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+        const cols = 8, rows = 8;
+        const cellW = canvas.width/cols;
+        for(let r=0;r<rows;r++){
+          for(let c=0;c<cols;c++){
+            const p = Math.abs(Math.sin((seed + r*13 + c*7)/100)) > 0.6;
+            ctx.fillStyle = p ? '#123a6e' : '#ffffff';
+            ctx.fillRect(c*cellW + 6, r*cellW + 6, cellW - 10, cellW - 10);
+          }
+        }
+        // center marker
+        ctx.fillStyle = '#2563eb';
+        ctx.fillRect(canvas.width/2 - 14, canvas.height/2 - 14, 28, 28);
+      }
+
+      function startSession(){
+        expiry = clamp(parseInt(el('#qrExpiry').value,10) || 45, 15, 120);
+        life = expiry;
+        drawStylizedQR();
+        qrTimerEl.textContent = life + 's';
+        sessionMeta.textContent = `Active session • Expires in ${life}s`;
+        if(tickInterval) clearInterval(tickInterval);
+        tickInterval = setInterval(()=>{
+          life--;
+          qrTimerEl.textContent = life + 's';
+          if(life <= 0){
+            clearInterval(tickInterval);
+            qrTimerEl.textContent = 'expired';
+            sessionMeta.textContent = 'No active session';
+          }
+        },1000);
+        liveCount = 0; liveCountEl.textContent = liveCount;
+      }
+
+      genBtn.addEventListener('click', ()=> { startSession(); toast('Secure QR generated'); });
+      simulateBtn.addEventListener('click', ()=>{
+        if(!life || life<=0){ toast('No active QR — generate one first'); return; }
+        if(!enrolled || !bound){ toast('Student not fully enrolled — requires enrolled face & device binding'); }
+        liveCount += 1; liveCountEl.textContent = liveCount;
+        toast('Student scanned QR • Live verification mock');
+      });
+
+      enrollBtn.addEventListener('click', ()=>{
+        enrolled = !enrolled;
+        enrollStatusEl.textContent = (enrolled ? 'Face enrolled' : 'No face enrolled') + (bound ? ' • Device bound' : ' • No device');
+        toast(enrolled ? 'Face enrolled (mock)' : 'Face enrollment removed');
+      });
+      bindBtn.addEventListener('click', ()=>{
+        bound = !bound;
+        enrollStatusEl.textContent = (enrolled ? 'Face enrolled' : 'No face enrolled') + (bound ? ' • Device bound' : ' • No device');
+        toast(bound ? 'Device bound (mock)' : 'Device unbound');
+      });
+
+      // initial draw
+      drawStylizedQR();
+    })();
+
+    /* =========================
+       EXPORTS (CSV & report)
+       ========================= */
+    (function(){
+      el('#exportCsvBtn').addEventListener('click', ()=>{
+        const rows = [
+          ['Name','ID','Time','Status'],
+          ['Arundhuti Sinha','S1001','09:02','Present'],
+          ['Mahika Das','S1002','09:03','Present'],
+          ['Student 3','S1003','09:04','Absent']
+        ];
+        const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+        const blob = new Blob([csv], {type:'text/csv'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a'); a.href=url; a.download='attendance.csv'; a.click(); URL.revokeObjectURL(url);
+        toast('CSV exported');
+      });
+
+      el('#downloadReportBtn').addEventListener('click', ()=>{
+        const txt = 'Classly Attendance Report\nDate: ' + new Date().toLocaleString() + '\nAttendance: 94%';
+        const blob = new Blob([txt], {type:'text/plain'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a'); a.href=url; a.download='classly-report.txt'; a.click(); URL.revokeObjectURL(url);
+        toast('Report downloaded');
+      });
+    })();
+
+    /* =========================
+       CALENDAR (week grid & events)
+       ========================= */
+    (function(){
+      const weekGrid = el('#weekGrid');
+      const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+      function renderWeek(){
+        weekGrid.innerHTML = '';
+        days.forEach((d,i)=>{
+          const cell = document.createElement('div');
+          cell.className = 'day';
+          cell.dataset.day = i;
+          cell.innerHTML = `<strong>${d}</strong>`;
+          weekGrid.appendChild(cell);
+        });
+      }
+      renderWeek();
+
+      el('#addEventBtn').addEventListener('click', ()=>{
+        const name = el('#evName').value.trim(); const date = el('#evDate').value; const time = el('#evTime').value;
+        if(!name || !date || !time) return toast('Enter name, date and time');
+        // simplistic: put into first day (demo)
+        const cell = weekGrid.children[0];
+        const pill = document.createElement('div'); pill.className='event-pill'; pill.textContent = name + ' • ' + time;
+        cell.appendChild(pill);
+        el('#evName').value=''; el('#evDate').value=''; el('#evTime').value='';
+        toast('Event added');
+      });
+
+      el('#clearEvents').addEventListener('click', ()=> {
+        renderWeek();
+        toast('Week cleared');
+      });
+    })();
+
+    /* =========================
+       PRODUCTIVITY (pomodoro + matrix + noise)
+       ========================= */
+    (function(){
+      const display = el('#pomTimer');
+      const start = el('#startPom'), pause = el('#pausePom'), reset = el('#resetPom');
+      let work = 25*60, remaining = work, timer=null, running=false;
+
+      function fmt(s){ const m=Math.floor(s/60), sec = s%60; return `${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`; }
+      display.textContent = fmt(remaining);
+
+      start.addEventListener('click', ()=>{
+        if(running) return;
+        running = true;
+        timer = setInterval(()=> {
+          remaining--;
+          display.textContent = fmt(remaining);
+          if(remaining <= 0){ clearInterval(timer); running=false; toast('Pomodoro complete! Take a short break.'); remaining = work; display.textContent = fmt(remaining); }
+        }, 1000);
+      });
+      pause.addEventListener('click', ()=> { if(timer) clearInterval(timer); running=false; });
+      reset.addEventListener('click', ()=> { if(timer) clearInterval(timer); running=false; remaining = work; display.textContent = fmt(remaining); });
+
+      // tasks to matrix
+      el('#addTaskBtn').addEventListener('click', ()=>{
+        const t = el('#taskText').value.trim(); if(!t) return toast('Enter a task');
+        const box = el('#urgentImp'); // simple demo: add to urgent+important
+        const p = document.createElement('div'); p.style.padding='8px'; p.style.marginTop='8px'; p.style.borderRadius='8px'; p.style.background='#e6f0ff'; p.textContent = t;
+        box.appendChild(p); el('#taskText').value=''; toast('Task added to Urgent + Important');
+      });
+
+      el('#suggestPriorities').addEventListener('click', ()=> {
+        alert('AI Suggestion (demo):\n1) Finish Math assignment (Urgent+Important)\n2) Research project (Not Urgent+Important)\n3) Reply to group (Urgent+Not Important)');
+      });
+
+      // white noise (simple audio loops)
+      let audio = null;
+      el('#toggleNoise').addEventListener('click', ()=>{
+        const sel = el('#noiseSelect').value;
+        if(sel==='none'){ if(audio){ audio.pause(); audio=null; toast('White noise stopped'); } else toast('Set a noise and press Play'); return; }
+        const urls = { rain: 'https://cdn.pixabay.com/download/audio/2021/12/15/audio_f8a73a9b17.mp3?filename=rain-loop-9948.mp3', library: 'https://cdn.pixabay.com/download/audio/2021/10/27/audio_8f6a3b7b61.mp3?filename=cafe-ambient-1-7365.mp3', coffee: 'https://cdn.pixabay.com/download/audio/2021/08/04/audio_8b3b3bce8f.mp3?filename=coffee-shop-ambient-6866.mp3' };
+        if(audio){ audio.pause(); audio=null; }
+        audio = new Audio(urls[sel] || urls.rain);
+        audio.loop = true; audio.volume = 0.45; audio.play();
+        toast('Playing ' + sel);
+      });
+    })();
+
+    /* =========================
+       CHATBOT (mock responses)
+       ========================= */
+    (function(){
+      const chatBox = el('#chatBox'), chatInput = el('#chatInput'), sendBtn = el('#sendChat');
+      const personaLabel = el('#personaLabel');
+      el('#personaStudent').addEventListener('click', ()=> personaLabel.textContent='Student');
+      el('#personaTeacher').addEventListener('click', ()=> personaLabel.textContent='Teacher');
+
+      function botReply(text){
+        const d = document.createElement('div'); d.className='msg bot'; d.innerHTML = `<strong>Bot:</strong> ${text}`; chatBox.appendChild(d); chatBox.scrollTop = chatBox.scrollHeight;
+      }
+
+      function userSend(txt){
+        const u = document.createElement('div'); u.className='msg user'; u.innerHTML = `<strong>You:</strong> ${txt}`; chatBox.appendChild(u); chatBox.scrollTop = chatBox.scrollHeight;
+        const thinking = document.createElement('div'); thinking.className='msg bot'; thinking.innerHTML = `<strong>Bot:</strong> ...`; chatBox.appendChild(thinking); chatBox.scrollTop = chatBox.scrollHeight;
+        setTimeout(()=> {
+          thinking.remove();
+          const persona = personaLabel.textContent;
+          if(/study|plan|organize/i.test(txt)){
+            botReply(persona === 'Student' ? 'Try a 25-min Pomodoro, prioritize high-value tasks, and block distractions.' : 'Suggest students submit assignments before deadline and offer office hours.');
+          } else if(/attendance|qr|scan/i.test(txt)){
+            botReply('QR sessions last a short time. Ensure device binding and face enrollment for secure verification.');
+          } else if(/risk|dropout/i.test(txt)){
+            botReply('Current dropout risk: Low. Monitor students with low engagement and attendance.');
+          } else {
+            botReply('Here is a recommendation: break tasks into smaller steps and schedule them in your calendar.');
+          }
+        }, 700 + Math.random()*500);
+      }
+
+      sendBtn.addEventListener('click', ()=> {
+        const t = chatInput.value.trim(); if(!t) return;
+        userSend(t); chatInput.value='';
+      });
+      chatInput.addEventListener('keydown', (e)=> { if(e.key==='Enter') sendBtn.click(); });
+
+      // quick prompts
+      els('button[data-prompt]').forEach(b=>{
+        b.addEventListener('click', ()=> {
+          const p = b.dataset.prompt; chatInput.value = p; sendBtn.click();
+        });
+      });
+
+      el('#quickRisk').addEventListener('click', ()=> {
+        userSend('Check dropout risk');
+      });
+    })();
+
+    /* =========================
+       FORUMS posting
+       ========================= */
+    (function(){
+      const posts = el('#posts'), postBtn = el('#postBtn'), postText = el('#postText');
+      postBtn.addEventListener('click', ()=> {
+        const t = postText.value.trim(); if(!t) return toast('Write something first');
+        const card = document.createElement('div'); card.className='post';
+        card.innerHTML = `<strong>${t}</strong><div class="muted small">Posted just now</div>`;
+        posts.prepend(card);
+        postText.value=''; toast('Posted to forum');
+      });
+    })();
+
+    /* =========================
+       ANALYTICS & HEATMAP
+       ========================= */
+    (function(){
+      const heat = el('#heatmap');
+      // generate 14 sample cells
+      for(let i=0;i<14;i++){
+        const c = document.createElement('div'); c.className='heat-cell';
+        const lvl = Math.floor(Math.random()*4);
+        if(lvl===0) c.style.background = '#f1f5f9';
+        else if(lvl===1) c.style.background = '#dbeafe';
+        else if(lvl===2) c.style.background = '#93c5fd';
+        else c.style.background = '#2563eb';
+        c.addEventListener('mouseenter', ()=> c.style.transform='scale(1.18)');
+        c.addEventListener('mouseleave', ()=> c.style.transform='scale(1)');
+        heat.appendChild(c);
+      }
+
+      el('#runModelBtn').addEventListener('click', ()=>{
+        el('#riskBadge').textContent = 'Moderate (34%)';
+        el('#riskBadge').style.color = '#b45309';
+        toast('Prediction finished (demo)');
+      });
+
+      el('#exportAnalytics').addEventListener('click', ()=> {
+        const blob = new Blob(['Analytics export (demo)'], {type:'text/plain'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a'); a.href=url; a.download='analytics.txt'; a.click(); URL.revokeObjectURL(url);
+        toast('Analytics exported');
+      });
+    })();
+
+    /* =========================
+       Guided tour
+       ========================= */
+    (function(){
+      el('#tourBtn').addEventListener('click', ()=> {
+        const steps = ['#attendance','#calendar','#productivity','#chat','#social','#analytics'];
+        let i=0;
+        const iv = setInterval(()=> {
+          if(i>=steps.length){ clearInterval(iv); toast('Tour complete'); return; }
+          document.querySelector(steps[i]).scrollIntoView({behavior:'smooth', block:'center'});
+          i++;
+        }, 1400);
+      });
+    })();
+
+    /* =========================
+       Misc interactions & accessibility
+       ========================= */
+    (function(){
+      el('#demoStart').addEventListener('click', ()=> {
+        document.querySelector('#attendance').scrollIntoView({behavior:'smooth'});
+        toast('Welcome! Start with Attendance or try the Guided Tour.');
+      });
+
+      // feedback
+      el('#feedbackBtn').addEventListener('click', ()=> {
+        const txt = prompt('Send quick feedback:');
+        if(txt) toast('Thanks for feedback!');
+      });
+
+      // Show auth when clicking nav CTA
+      // Accessibility: keyboard shortcut "/" focuses chat input
+      document.addEventListener('keydown', (e)=> {
+        if(e.key === '/' && document.activeElement.tagName !== 'INPUT') { e.preventDefault(); el('#chatInput').focus(); }
+      });
+
+      // small nav behavior
+      window.addEventListener('scroll', ()=> {
+        const nav = el('.topbar');
+        if(window.scrollY > 24){ nav.style.transform = 'translateY(-6px)'; nav.style.boxShadow = '0 18px 60px rgba(11,37,69,0.12)'; }
+        else { nav.style.transform = 'none'; nav.style.boxShadow = 'var(--shadow-md)'; }
+      }, {passive:true});
+    })();
+
+    /* =========================
+       Final polish: ensure elements are interactive-looking
+       (Add small hover/click effects programmatically for many elements)
+       ========================= */
+    (function(){
+      // make buttons animate slightly on click
+      els('.btn').forEach(b=>{
+        b.addEventListener('mousedown', ()=> b.style.transform = 'translateY(1px) scale(.995)');
+        b.addEventListener('mouseup', ()=> b.style.transform = '');
+        b.addEventListener('mouseleave', ()=> b.style.transform = '');
+      });
+
+      // focus styles for inputs
+      els('input, select, textarea').forEach(inp=>{
+        inp.addEventListener('focus', ()=> inp.style.boxShadow = '0 8px 30px rgba(37,99,235,0.08)');
+        inp.addEventListener('blur', ()=> inp.style.boxShadow = 'none');
+      });
+    })();
+  </script>
+</body>
+</html>
